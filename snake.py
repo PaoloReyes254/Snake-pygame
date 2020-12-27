@@ -29,18 +29,19 @@ class SNAKE(object):
     def draw_snake(self):
         for index, block in enumerate(self.body):
             if index == 0:
-                if self.direction.x == 1 and self.direction.y == 0:
-                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
-                    screen.blit(self.head_right, block_rect)
-                elif self.direction.x == -1 and self.direction.y == 0:
+                difference = self.body[1] - self.body[0]
+                if difference == Vector2(1, 0):
                     block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
                     screen.blit(self.head_left, block_rect)
-                elif self.direction.x == 0 and self.direction.y == 1:
+                elif difference == Vector2(-1, 0):
                     block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
-                    screen.blit(self.head_down, block_rect)
-                elif self.direction.x == 0 and self.direction.y == -1:
+                    screen.blit(self.head_right, block_rect)
+                elif difference == Vector2(0, 1):
                     block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
                     screen.blit(self.head_up, block_rect)
+                elif difference == Vector2(0, -1):
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.head_down, block_rect)
             elif index > 0 and index < len(self.body) - 1:
                 if block.x + 1 == self.body[index - 1].x:
                     if block.y + 1 == self.body[index + 1].y:
