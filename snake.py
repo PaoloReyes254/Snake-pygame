@@ -8,10 +8,93 @@ class SNAKE(object):
         self.direction = Vector2(1, 0)
         self.new_block = False
 
+        self.head_up = pygame.image.load("assets/head_up.png").convert_alpha()
+        self.head_down = pygame.image.load("assets/head_down.png").convert_alpha()
+        self.head_left = pygame.image.load("assets/head_left.png").convert_alpha()
+        self.head_right = pygame.image.load("assets/head_right.png").convert_alpha()
+
+        self.tail_up = pygame.image.load("assets/tail_up.png").convert_alpha()
+        self.tail_down = pygame.image.load("assets/tail_down.png").convert_alpha()
+        self.tail_left = pygame.image.load("assets/tail_left.png").convert_alpha()
+        self.tail_right = pygame.image.load("assets/tail_right.png").convert_alpha()
+
+        self.body_vertical = pygame.image.load("assets/body_vertical.png").convert_alpha()
+        self.body_horizontal = pygame.image.load("assets/body_horizontal.png").convert_alpha()
+
+        self.body_tr = pygame.image.load("assets/body_tr.png").convert_alpha()
+        self.body_tl = pygame.image.load("assets/body_tl.png").convert_alpha()
+        self.body_br = pygame.image.load("assets/body_br.png").convert_alpha()
+        self.body_bl = pygame.image.load("assets/body_bl.png").convert_alpha()
+
     def draw_snake(self):
-        for block in self.body:
-            block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
-            pygame.draw.rect(screen, (0, 200, 200), block_rect)
+        for index, block in enumerate(self.body):
+            if index == 0:
+                if self.direction.x == 1 and self.direction.y == 0:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.head_right, block_rect)
+                elif self.direction.x == -1 and self.direction.y == 0:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.head_left, block_rect)
+                elif self.direction.x == 0 and self.direction.y == 1:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.head_down, block_rect)
+                elif self.direction.x == 0 and self.direction.y == -1:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.head_up, block_rect)
+            elif index > 0 and index < len(self.body) - 1:
+                if block.x + 1 == self.body[index - 1].x:
+                    if block.y + 1 == self.body[index + 1].y:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_br, block_rect)
+                    elif block.y - 1 == self.body[index + 1].y:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_tr, block_rect)
+                    else:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_horizontal, block_rect)
+                elif block.x - 1 == self.body[index - 1].x:
+                    if block.y + 1 == self.body[index + 1].y:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_bl, block_rect)
+                    elif block.y - 1 == self.body[index + 1].y:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_tl, block_rect)
+                    else:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_horizontal, block_rect)
+                elif block.y - 1 == self.body[index - 1].y:
+                    if block.x + 1 == self.body[index + 1].x:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_tr, block_rect)
+                    elif block.x - 1 == self.body[index + 1].x:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_tl, block_rect)
+                    else:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_vertical, block_rect)
+                elif block.y + 1 == self.body[index - 1].y:
+                    if block.x - 1 == self.body[index + 1].x:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_bl, block_rect)
+                    elif block.x + 1 == self.body[index + 1].x:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_br, block_rect)
+                    else:
+                        block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                        screen.blit(self.body_vertical, block_rect)
+            else:
+                if block.x + 1 == self.body[index - 1].x:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.tail_left, block_rect)
+                elif block.x - 1 == self.body[index - 1].x:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.tail_right, block_rect)
+                elif block.y - 1 == self.body[index - 1].y:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.tail_down, block_rect)
+                elif block.y + 1 == self.body[index - 1].y:
+                    block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
+                    screen.blit(self.tail_up, block_rect)
 
     def move_snake(self):
         if self.new_block == True:
@@ -35,7 +118,7 @@ class FRUIT(object):
     
     def draw_fruit(self):
         fruit_rect = pygame.Rect(self.pos.x * cell_size, self.pos.y * cell_size, cell_size, cell_size)
-        pygame.draw.rect(screen, (255, 0, 0), fruit_rect)
+        screen.blit(apple_surface, fruit_rect)
 
 class MAIN(object):
     def __init__(self):
@@ -79,6 +162,7 @@ pygame.display.set_icon(logo_surface)
 clock = pygame.time.Clock()
 
 #Surfaces
+apple_surface = pygame.image.load("assets/apple.png").convert_alpha()
 
 #Objects
 main_game = MAIN()
@@ -127,7 +211,7 @@ while run:
 
     #FPS
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(120)
     #print(clock.get_fps())
 
 #Pygame quit
