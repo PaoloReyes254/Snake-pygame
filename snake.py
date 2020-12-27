@@ -1,6 +1,7 @@
 import pygame, random
 from pygame.math import Vector2
 
+#Classes
 class SNAKE(object):
     def __init__(self):
         self.body = [Vector2(8, 10), Vector2(7, 10), Vector2(6, 10)]
