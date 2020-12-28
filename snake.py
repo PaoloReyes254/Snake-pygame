@@ -5,7 +5,7 @@ from pygame.math import Vector2
 class SNAKE(object):
     def __init__(self):
         self.body = [Vector2(10, 9), Vector2(9, 9), Vector2(8, 9)]
-        self.direction = Vector2(1, 0)
+        self.direction = Vector2(0, 0)
         self.new_block = False
 
         self.head_up = pygame.image.load("assets/head_up.png").convert_alpha()
@@ -138,9 +138,11 @@ class MAIN(object):
         self.valid_fruit_pos()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
+        self.draw_text()
     
     def check_collisions(self):
         if self.fruit.pos == self.snake.body[0]:
+            point_sound.play()
             self.fruit.__init__()
             self.snake.add_one()
     
@@ -180,6 +182,21 @@ class MAIN(object):
                         grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
                         pygame.draw.rect(screen, grass_color, grass_rect)
 
+    def draw_text(self):
+        score = str(len(self.snake.body) - 3)
+        score_surface = game_text.render(score, True, (254, 254, 254))
+        score_x = cell_number * cell_size - 60
+        score_y = cell_number * cell_size - 40
+        score_rect = score_surface.get_rect(center = (score_x, score_y))
+        apple_rect = apple_surface.get_rect(midright = (score_rect.left, score_rect.centery))
+
+        bg_rect = pygame.Rect(apple_rect.left, apple_rect.top, apple_rect.width + score_rect.width + 10, apple_rect.height)
+        pygame.draw.rect(screen, (167, 209, 61), bg_rect)
+        pygame.draw.rect(screen, (40, 40, 40), bg_rect, 2)
+
+        screen.blit(score_surface, score_rect)
+        screen.blit(apple_surface, apple_rect)
+
 #Game dimensions
 cell_size = 40
 cell_number = 20
@@ -196,6 +213,10 @@ clock = pygame.time.Clock()
 
 #Surfaces
 apple_surface = pygame.image.load("assets/apple.png").convert_alpha()
+game_text = pygame.font.Font("assets/PoetsenOne-Regular.ttf", 25)
+
+#Sound
+point_sound = pygame.mixer.Sound("assets/crunch.wav")
 
 #Objects
 main_game = MAIN()
@@ -206,13 +227,14 @@ pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 #Game loop
 run = True
+reset = True
 while run:
     #Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == SCREEN_UPDATE:
-            run = main_game.update()
+            reset = main_game.update()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 if not main_game.snake.body[0].y - 1 == main_game.snake.body[1].y:
@@ -228,13 +250,13 @@ while run:
                     main_game.snake.direction = Vector2(1, 0)
 
     #Helper for checking collitions since for loop not working on main class
-    if run == True:
-        for block in main_game.snake.body[1:]:
-            if block == main_game.snake.body[0]:
-                run = False
-                break
-            else:
-                run = True
+    if reset == False:
+        main_game.snake.body = [Vector2(10, 9), Vector2(9, 9), Vector2(8, 9)]
+        main_game.snake.direction = Vector2(0, 0)
+    for block in main_game.snake.body[1:]:
+        if block == main_game.snake.body[0]:
+            main_game.snake.body = [Vector2(10, 9), Vector2(9, 9), Vector2(8, 9)]
+            main_game.snake.direction = Vector2(0, 0)
 
     #Screen 
     screen.fill((175, 215, 70))
@@ -244,7 +266,7 @@ while run:
 
     #FPS
     pygame.display.update()
-    clock.tick(120)
+    clock.tick(60)
     #print(clock.get_fps())
 
 #Pygame quit
