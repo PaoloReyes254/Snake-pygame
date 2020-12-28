@@ -4,7 +4,7 @@ from pygame.math import Vector2
 #Classes
 class SNAKE(object):
     def __init__(self):
-        self.body = [Vector2(8, 10), Vector2(7, 10), Vector2(6, 10)]
+        self.body = [Vector2(10, 9), Vector2(9, 9), Vector2(8, 9)]
         self.direction = Vector2(1, 0)
         self.new_block = False
 
@@ -134,6 +134,8 @@ class MAIN(object):
         return self.run
 
     def draw_elements(self):
+        self.draw_grass()
+        self.valid_fruit_pos()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
     
@@ -141,12 +143,42 @@ class MAIN(object):
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.__init__()
             self.snake.add_one()
+    
+    def valid_fruit_pos(self):
+        status = False
+        for block in self.snake.body:
+            if self.fruit.pos == block:
+                self.fruit.__init__()
+                status = True
+        while status:
+            for block in self.snake.body:
+                if self.fruit.pos == block:
+                    self.fruit.__init__()
+                if block == self.snake.body[len(self.snake.body) - 1]:
+                    if self.fruit.pos == block:
+                        self.fruit.__init__()
+                    else:
+                        status = False
 
     def check_fail(self, run):
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
             return False
         else:
             return True
+
+    def draw_grass(self):
+        grass_color = (167, 209, 61)
+        for row in range(cell_number):
+            if row % 2 == 0:
+                for col in range(cell_number):
+                    if col % 2 == 0:
+                        grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                        pygame.draw.rect(screen, grass_color, grass_rect)
+            else:
+                for col in range(cell_number):
+                    if col % 2 != 0:
+                        grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                        pygame.draw.rect(screen, grass_color, grass_rect)
 
 #Game dimensions
 cell_size = 40
